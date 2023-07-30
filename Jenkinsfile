@@ -20,7 +20,7 @@ environment {
 
 ANYPOINT_CREDENTIALS = credentials('Anypoint.Platform')
             }
-echo '${ANYPOINT_CREDENTIALS_USR}
+echo '${ANYPOINT_CREDENTIALS_USR}'
 steps {
 
 echo 'Deploying mule project due to the latest code commit…'
