@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="dd695b5a-751f-4751-bf1c-3a3fee4d5cc2" >
+		<db:generic-connection url="jdbc:postgresql://oregon-postgres.render.com:5432/gouthamdb_trqw" driverClassName="org.postgresql.Driver" user="gouthamdb_trqw_user" password="HKnLlHQCrfjnGzq8jUgnvwwSUQSwRtRo" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f1b52e88-27cf-4724-a740-b76b5e3ca14a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="sqlConnectFlow" doc:id="760a0d52-9e80-4bdb-8ce9-c2caaff93ff7" >
+		<http:listener doc:name="Listener" doc:id="c8130479-0277-4772-8ef4-d6e1f2b4d642" config-ref="HTTP_Listener_config" path="/sqldb"/>
+		<logger level="INFO" doc:name="Logger" doc:id="bbbaec7b-2ab9-4f89-b05a-6d4fd2132692" message="request received"/>
+		<db:select doc:name="Select" doc:id="46596d0d-4a07-4c01-ad72-32e80294933d" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from users]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="a70e09fc-737c-4735-8c4d-e0a26eb90bdc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="sqlConnectFlow1" doc:id="5b9a7977-8ca1-44c1-a0b3-49bbffb6ee65" >
+		<http:listener doc:name="Listener" doc:id="0c37c1d1-3f32-4668-81a3-48cedf017ba3" config-ref="HTTP_Listener_config" path="/task" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dfd935de-e4f6-47fb-9f2c-6139d040e30c" message="request received"/>
+		<db:select doc:name="Select" doc:id="cdee2059-8ac4-4c03-b11d-fc20d905e47a" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from "Tasks"]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="1d59a447-e3ae-442f-ac7b-313cd4a98779" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
