@@ -42,4 +42,21 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="fetch-single-task" doc:id="b86de99e-d465-432f-af3f-03b30d234990" >
+		<http:listener doc:name="Listener" doc:id="e45bdb76-b652-4e58-8dda-f29dfdc0c5db" config-ref="HTTP_Listener_config" path="/task/{id}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="690d23aa-7904-42b4-ac3b-05d91077319f" message="request received"/>
+		<db:select doc:name="Select" doc:id="acf9caf4-eea0-4e4d-ab78-8e87a850af7e" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from "Tasks" where id= :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[id: attributes.uriParams.id]]]></db:input-parameters>
+		
+</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="1af6d286-95a0-4169-91e4-60ba77f02252" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>
