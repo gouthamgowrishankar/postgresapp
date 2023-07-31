@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  tools {
+        maven "$TOOL_MAVEN"
+        jdk "$TOOL_JDK"
+    }
   stages {
     stage('Deploy CloudHub') { 
       environment {
