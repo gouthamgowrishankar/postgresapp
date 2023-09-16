@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:telegram="http://www.mulesoft.org/schema/mule/telegram" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/telegram http://www.mulesoft.org/schema/mule/telegram/current/mule-telegram.xsd">
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="dd695b5a-751f-4751-bf1c-3a3fee4d5cc2" >
 		<db:generic-connection url="jdbc:postgresql://oregon-postgres.render.com:5432/gouthamdb_trqw" driverClassName="org.postgresql.Driver" user="gouthamdb_trqw_user" password="HKnLlHQCrfjnGzq8jUgnvwwSUQSwRtRo" />
 	</db:config>
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f1b52e88-27cf-4724-a740-b76b5e3ca14a" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
+	<telegram:config name="Telegram_Connector_Config" doc:name="Telegram Connector Config" doc:id="037d694c-288e-4429-9955-665473981ecf" >
+		<telegram:connection-provider-connection secureToken="0d645ece497b2fbfe2d49a49e0221d41" />
+	</telegram:config>
+	<telegram:config name="Telegram_Connector_Config1" doc:name="Telegram Connector Config" doc:id="15c06d47-b217-4ca3-b88c-abd332c7bd88" >
+		<telegram:connection-provider-connection secureToken="6568880603:AAGCnE42O9lgxahnrJhmEY5hAQPzp0m8Tag" />
+	</telegram:config>
 	<flow name="sqlConnectFlow" doc:id="760a0d52-9e80-4bdb-8ce9-c2caaff93ff7" >
 		<http:listener doc:name="Listener" doc:id="c8130479-0277-4772-8ef4-d6e1f2b4d642" config-ref="HTTP_Listener_config" path="/sqldb"/>
 		<logger level="INFO" doc:name="Logger" doc:id="bbbaec7b-2ab9-4f89-b05a-6d4fd2132692" message="request received"/>
@@ -59,4 +66,30 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="postgresappFlow1" doc:id="d275b137-5a27-418b-baf6-e5006ecf0c18" >
+		<http:listener doc:name="Listener" doc:id="d7a4faea-417c-4422-9723-d391505ad576" config-ref="HTTP_Listener_config" path="/updatedetails"/>
+		<telegram:get-updates doc:name="Get Updates" doc:id="6731bcda-5be9-42cb-a5f3-601432b4e2e9" config-ref="Telegram_Connector_Config1" offset="1" timeout="5"/>
+		<logger level="INFO" doc:name="Logger" doc:id="672ae395-4ef4-4278-a61a-9046498e063c" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="c986e66a-1fd3-45d2-b76a-cee0ebc27ca3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postgresappFlow" doc:id="54cee978-dd8d-40a1-bbc2-f6d3de07e3d3" >
+		<http:listener doc:name="Listener" doc:id="1d08f677-4387-4e39-bde2-05e75ff0bf5c" config-ref="HTTP_Listener_config" path="/sendmsg"/>
+		<telegram:send-message doc:name="Send text message" doc:id="60d6df23-9c84-44e2-a342-3071ca646fb2" config-ref="Telegram_Connector_Config1"/>
+		<ee:transform doc:name="Transform Message" doc:id="2c5f5c49-4d65-41be-b065-231cce6463be" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
 </mule>
