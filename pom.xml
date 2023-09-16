@@ -57,7 +57,7 @@
 				<configuration>
 					<sharedLibraries>
 						<sharedLibrary>
-							<groupId>com.mycompany</groupId>
+							<groupId>8521b161-742f-46d4-a28e-2360f0b32415</groupId>
 							<artifactId>postgresql-42.6.0</artifactId>
 						</sharedLibrary>
 					</sharedLibraries>
@@ -68,7 +68,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.mycompany</groupId>
+			<groupId>8521b161-742f-46d4-a28e-2360f0b32415</groupId>
 			<artifactId>postgresql-42.6.0</artifactId>
 			<version>42.6.0</version>
 		</dependency>
