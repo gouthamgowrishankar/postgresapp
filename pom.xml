@@ -90,14 +90,21 @@
 			<version>1.14.3</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.6.0</version>
 		</dependency>
 	</dependencies>
 
 	<repositories>
+		<repository>
+			<id>postgresql</id>
+			<name>postgresql</name>
+			<url>https://mvnrepository.com/artifact/org.postgresql/postgresql</url>
+			<layout>default</layout>
+		</repository>
 		<repository>
 			<id>anypoint-exchange-v3</id>
 			<name>Anypoint Exchange</name>
@@ -119,7 +126,7 @@
 			<layout>default</layout>
 			<url>https://repository.mulesoft.org/releases/</url>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
